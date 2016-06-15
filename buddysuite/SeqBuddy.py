@@ -1419,23 +1419,24 @@ def count_codons(seqbuddy):
     else:
         codontable = CodonTable.ambiguous_rna_by_name['Standard'].forward_table
     output = OrderedDict()
+    seqbuddy_copy = make_copy(seqbuddy)
+    seqbuddy_copy = replace_subsequence(sequbuddy_copy, "[-.]", "")
     for rec in seqbuddy.records:
-        sequence = rec.seq
-        if len(sequence) % 3 != 0:
-            while len(sequence) % 3 != 0:
-                sequence = sequence[:-1]
+        sequence = rec.seq.upper()
+        while len(sequence) % 3 != 0:
+            sequence = sequence[:-1]
         data_table = {}
         num_codons = len(sequence) / 3
         while len(sequence) > 0:
-            codon = str(sequence[:3]).upper()
+            codon = str(sequence[:3])
             if codon in data_table:
                 data_table[codon][1] += 1
             else:
-                if codon.upper() in ['ATG', 'AUG']:
+                if codon in ['ATG', 'AUG']:
                     data_table[codon] = ['M', 1, 0.0]
-                elif codon.upper() == 'NNN':
+                elif codon == 'NNN':
                     data_table[codon] = ['X', 1, 0.0]
-                elif codon.upper() in ['TAA', 'TAG', 'TGA', 'UAA', 'UAG', 'UGA']:
+                elif codon in ['TAA', 'TAG', 'TGA', 'UAA', 'UAG', 'UGA']:
                     data_table[codon] = ['*', 1, 0.0]
                 else:
                     try:
